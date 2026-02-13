@@ -1,21 +1,17 @@
-// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-// Core Models
 model Supervisor {
-  id        String    @id @default(cuid())
+  id        String               @id @default(cuid())
   name      String
-  email     String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  
+  email     String               @unique
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
   fellows   Fellow[]
   overrides SupervisorOverride[]
 }
@@ -23,71 +19,56 @@ model Supervisor {
 model Fellow {
   id           String     @id @default(cuid())
   name         String
-  cohort       String     // e.g., "2024-Q1"
+  cohort       String
   supervisorId String
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-  
   supervisor   Supervisor @relation(fields: [supervisorId], references: [id])
   sessions     Session[]
-  
+
   @@index([supervisorId])
 }
 
 model Session {
-  id               String     @id @default(cuid())
-  fellowId         String
-  groupId          String     // e.g., "GRP-001"
-  sessionDate      DateTime
-  transcript       String     @db.Text
-  durationMinutes  Int
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  
-  fellow           Fellow     @relation(fields: [fellowId], references: [id])
-  analyses         AIAnalysis[]
-  riskFlags        RiskFlag[]
-  
+  id              String       @id @default(cuid())
+  fellowId        String
+  groupId         String
+  sessionDate     DateTime
+  transcript      String
+  durationMinutes Int
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  analyses        AIAnalysis[]
+  riskFlags       RiskFlag[]
+  fellow          Fellow       @relation(fields: [fellowId], references: [id])
+
   @@index([fellowId])
   @@index([sessionDate])
 }
 
 model AIAnalysis {
-  id            String    @id @default(cuid())
-  sessionId     String
-  modelVersion  String    // e.g., "gpt-4-turbo-2024-04-09"
-  
-  // Summary
-  summary       String    @db.Text
-  
-  // Metric 1: Content Coverage
-  contentScore       Int       // 1, 2, or 3
-  contentEvidence    String[]
-  contentReasoning   String    @db.Text
-  
-  // Metric 2: Facilitation Quality
-  facilitationScore      Int
-  facilitationEvidence   String[]
-  facilitationReasoning  String  @db.Text
-  
-  // Metric 3: Protocol Safety
-  protocolScore      Int
-  protocolEvidence   String[]
-  protocolReasoning  String    @db.Text
-  
-  // Risk Assessment
-  riskFlag           String    // "SAFE" or "RISK"
-  riskSeverity       String?   // "none", "moderate", "severe"
-  riskConfidence     Float     // 0.0 to 1.0
-  
-  // Metadata
-  processingTimeMs   Int
-  rawOutput          String    @db.Text  // Store full LLM response
-  createdAt          DateTime  @default(now())
-  
-  session            Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  overrides          SupervisorOverride[]
-  
+  id                    String               @id @default(cuid())
+  sessionId             String
+  modelVersion          String
+  summary               String
+  contentScore          Int
+  contentEvidence       String[]
+  contentReasoning      String
+  facilitationScore     Int
+  facilitationEvidence  String[]
+  facilitationReasoning String
+  protocolScore         Int
+  protocolEvidence      String[]
+  protocolReasoning     String
+  riskFlag              String
+  riskSeverity          String?
+  riskConfidence        Float
+  processingTimeMs      Int
+  rawOutput             String
+  createdAt             DateTime             @default(now())
+  session               Session              @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  overrides             SupervisorOverride[]
+
   @@index([sessionId])
   @@index([createdAt])
 }
@@ -95,15 +76,14 @@ model AIAnalysis {
 model RiskFlag {
   id         String    @id @default(cuid())
   sessionId  String
-  severity   String    // "moderate", "severe"
-  quotes     String[]  // Extracted concerning quotes
+  severity   String
+  quotes     String[]
   resolved   Boolean   @default(false)
   resolvedBy String?
   resolvedAt DateTime?
   createdAt  DateTime  @default(now())
-  
   session    Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  
+
   @@index([sessionId])
   @@index([resolved])
 }
@@ -112,15 +92,14 @@ model SupervisorOverride {
   id           String     @id @default(cuid())
   analysisId   String
   supervisorId String
-  action       String     // "VALIDATE", "REJECT", "MODIFY"
-  previousFlag String     // What the AI said
-  newFlag      String     // What supervisor changed it to
-  notes        String?    @db.Text
+  action       String
+  previousFlag String
+  newFlag      String
+  notes        String?
   createdAt    DateTime   @default(now())
-  
   analysis     AIAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
   supervisor   Supervisor @relation(fields: [supervisorId], references: [id])
-  
+
   @@index([analysisId])
   @@index([supervisorId])
 }
