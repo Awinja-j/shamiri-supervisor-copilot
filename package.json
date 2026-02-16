@@ -6,22 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-<<<<<<< HEAD
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-=======
     "lint": "eslint",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx -r dotenv/config scripts/seed.ts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-neon": "^7.4.0",
     "@prisma/client": "^7.4.0",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -38,24 +27,22 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "tailwind-merge": "^3.4.0",
+    "ws": "^8.19.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.33",
->>>>>>> 36345ce4c3242473195fbbdc19b0e0c717f32757
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8.18.1",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
-<<<<<<< HEAD
-    "tailwindcss": "^4",
-=======
     "prisma": "^7.4.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
->>>>>>> 36345ce4c3242473195fbbdc19b0e0c717f32757
     "typescript": "^5"
   }
 }

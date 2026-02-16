@@ -1,7 +1,53 @@
-// scripts/seed.ts
+import { config } from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+/*
+import { PrismaNeon } from '@prisma/adapter-neon';
+import { Pool } from '@neondatabase/serverless';
+import ws from 'ws'
+*/
+
+// Load environment variables FIRST
+config();
+/*
+import { neonConfig } from '@neondatabase/serverless';
+neonConfig.webSocketConstructor = ws;
+*/
+
+// Verify DATABASE_URL is loaded
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL is not defined in environment variables');
+}
+
+// DEBUG: Print environment variables
+console.log('=== ENVIRONMENT VARIABLES DEBUG ===');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DATABASE_URL exists?:', !!process.env.DATABASE_URL);
+console.log('DATABASE_URL length:', process.env.DATABASE_URL?.length);
+console.log('DATABASE_URL (first 50 chars):', process.env.DATABASE_URL?.substring(0, 50));
+console.log('DATABASE_URL (full):', process.env.DATABASE_URL);
+console.log('All env keys:', Object.keys(process.env).filter(key => key.includes('DATABASE')));
+console.log('===================================\n');
+
+console.log('🔗 Connecting to database...');
+
+
+/*
+// Create Neon pool and adapter
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaNeon(pool);
+*/
+
+const prisma = new PrismaClient({
+  log: ['query', 'error', 'warn'],
+});
+/*
+// Create Prisma client with adapter
+const prisma = new PrismaClient({ 
+  adapter,
+  log: ['query', 'error', 'warn'],
+});
+*/
 
 const THERAPY_TRANSCRIPTS = [
   {
@@ -840,6 +886,7 @@ const THERAPY_TRANSCRIPTS = [
 [24:00] Fellow Peter: We're done for today. See you next session.`
   }
 ];
+
 
 async function main() {
   console.log('🌱 Starting seed...');
