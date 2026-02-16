@@ -5,8 +5,6 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 
-const [analyzing, setAnalyzing] = useState(false);
-
 type Analysis = {
   summary: string;
   contentCoverage: {
@@ -55,6 +53,8 @@ export default function SessionDetailPage() {
   useEffect(() => {
     fetchSession();
   }, [sessionId]);
+  
+  const [analyzing, setAnalyzing] = useState(false);
 
   const fetchSession = async () => {
     try {
