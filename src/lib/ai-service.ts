@@ -1,4 +1,3 @@
-// src/lib/ai-service.ts
 import OpenAI from 'openai';
 import { SessionAnalysis, SessionAnalysisSchema } from './analysis-schema';
 
