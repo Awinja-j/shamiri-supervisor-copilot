@@ -57,13 +57,13 @@ export async function analyzeSessionTranscript(
   fellowName: string,
   groupId: string
 ): Promise<SessionAnalysis> {
-  console.log(`🤖 Starting AI analysis for ${groupId} (${fellowName})...`);
+  console.log(`Starting AI analysis for ${groupId} (${fellowName})...`);
   
   const startTime = Date.now();
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o', // or 'gpt-4-turbo' if you have access
+      model: 'gpt-4o', 
       messages: [
         {
           role: 'system',
@@ -107,8 +107,8 @@ Respond with a JSON object matching this exact structure:
 }`,
         },
       ],
-      temperature: 0.3, // Lower temperature for more consistent analysis
-      response_format: { type: 'json_object' }, // Force JSON output
+      temperature: 0.3, 
+      response_format: { type: 'json_object' }, 
     });
 
     const content = response.choices[0].message.content;
@@ -116,7 +116,6 @@ Respond with a JSON object matching this exact structure:
       throw new Error('No content in AI response');
     }
 
-    // Parse and validate against schema
     const rawAnalysis = JSON.parse(content);
     const validatedAnalysis = SessionAnalysisSchema.parse(rawAnalysis);
 
@@ -127,7 +126,6 @@ Respond with a JSON object matching this exact structure:
   } catch (error) {
     console.error('❌ AI analysis failed:', error);
     
-    // Return a safe fallback analysis
     return {
       summary: 'Analysis failed. Please review manually or try again.',
       contentCoverage: {

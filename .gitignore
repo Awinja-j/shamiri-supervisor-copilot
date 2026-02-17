@@ -44,3 +44,5 @@ next-env.d.ts
 
 /src/generated/prisma
 >>>>>>> 36345ce4c3242473195fbbdc19b0e0c717f32757
+
+/src/generated/prisma

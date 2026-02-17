@@ -1,5 +1,3 @@
-// src/lib/mock-data.ts
-
 export const MOCK_SUPERVISOR = {
   id: '1',
   name: 'Dr. Kamau Mwangi',
@@ -89,7 +87,6 @@ export const MOCK_ANALYSIS = {
   },
 };
 
-// src/lib/mock-data.ts
 export const MOCK_TRANSCRIPTS: Record<string, string> = {
   '1': `[00:00] Fellow Amara: Good afternoon everyone! Welcome to our Growth Mindset session. How is everyone feeling today?
 
