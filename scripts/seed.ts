@@ -232,7 +232,7 @@ async function main() {
   console.log('\n🌱 Starting database seed...\n');
 
   // Clean existing data
-  console.log('🧹 Cleaning existing data...');
+  console.log('Cleaning existing data...\n');
   await prisma.supervisorOverride.deleteMany();
   await prisma.riskFlag.deleteMany();
   await prisma.aIAnalysis.deleteMany();
