@@ -1,26 +1,20 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Supervisor {
-  id        String               @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  email     String               @unique
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
   fellows   Fellow[]
   overrides SupervisorOverride[]
 }
@@ -32,52 +26,64 @@ model Fellow {
   supervisorId String
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  
   supervisor   Supervisor @relation(fields: [supervisorId], references: [id])
   sessions     Session[]
-
+  
   @@index([supervisorId])
 }
 
 model Session {
-  id              String       @id @default(cuid())
-  fellowId        String
-  groupId         String
-  sessionDate     DateTime
-  transcript      String
-  durationMinutes Int
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  analyses        AIAnalysis[]
-  riskFlags       RiskFlag[]
-  fellow          Fellow       @relation(fields: [fellowId], references: [id])
-
+  id               String       @id @default(cuid())
+  fellowId         String
+  groupId          String
+  sessionDate      DateTime
+  transcript       String       @db.Text
+  durationMinutes  Int
+  status           String       @default("Pending")
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  
+  fellow           Fellow       @relation(fields: [fellowId], references: [id])
+  analyses         AIAnalysis[]
+  riskFlags        RiskFlag[]
+  
   @@index([fellowId])
   @@index([sessionDate])
 }
 
 model AIAnalysis {
-  id                    String               @id @default(cuid())
-  sessionId             String
-  modelVersion          String
-  summary               String
-  contentScore          Int
-  contentEvidence       String[]
-  contentReasoning      String
-  facilitationScore     Int
-  facilitationEvidence  String[]
-  facilitationReasoning String
-  protocolScore         Int
-  protocolEvidence      String[]
-  protocolReasoning     String
-  riskFlag              String
-  riskSeverity          String?
-  riskConfidence        Float
-  processingTimeMs      Int
-  rawOutput             String
-  createdAt             DateTime             @default(now())
-  session               Session              @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  overrides             SupervisorOverride[]
-
+  id            String    @id @default(cuid())
+  sessionId     String
+  modelVersion  String
+  
+  summary       String    @db.Text
+  
+  contentScore       Int
+  contentEvidence    String[]
+  contentReasoning   String   @db.Text
+  
+  facilitationScore      Int
+  facilitationEvidence   String[]
+  facilitationReasoning  String  @db.Text
+  
+  protocolScore      Int
+  protocolEvidence   String[]
+  protocolReasoning  String   @db.Text
+  
+  riskFlag           String
+  riskSeverity       String?
+  riskConfidence     Float
+  riskQuotes         String[]
+  riskReasoning      String   @db.Text
+  
+  processingTimeMs   Int      @default(0)
+  rawOutput          String   @db.Text @default("")
+  createdAt          DateTime @default(now())
+  
+  session            Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  overrides          SupervisorOverride[]
+  
   @@index([sessionId])
   @@index([createdAt])
 }
@@ -91,8 +97,9 @@ model RiskFlag {
   resolvedBy String?
   resolvedAt DateTime?
   createdAt  DateTime  @default(now())
+  
   session    Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-
+  
   @@index([sessionId])
   @@index([resolved])
 }
@@ -104,11 +111,12 @@ model SupervisorOverride {
   action       String
   previousFlag String
   newFlag      String
-  notes        String?
+  notes        String?    @db.Text
   createdAt    DateTime   @default(now())
+  
   analysis     AIAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
   supervisor   Supervisor @relation(fields: [supervisorId], references: [id])
-
+  
   @@index([analysisId])
   @@index([supervisorId])
 }
