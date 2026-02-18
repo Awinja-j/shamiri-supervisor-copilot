@@ -55,6 +55,7 @@ export default function SessionDetailPage() {
   
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [optimisticStatus, setOptimisticStatus] = useState<string | null>(null);
 
 
   const fetchSession = async () => {
@@ -74,6 +75,8 @@ export default function SessionDetailPage() {
     setAnalyzing(true);
     setAnalysisError(null);
     
+    setOptimisticStatus('Processing');
+    
     try {
       const response = await fetch(`/api/sessions/${sessionId}/analyze`, {
         method: 'POST',
@@ -83,14 +86,18 @@ export default function SessionDetailPage() {
       
       if (!response.ok) {
         setAnalysisError(data.userMessage || data.message || 'Analysis failed');
+        setOptimisticStatus(null); 
         return;
       }
       
+      console.log('Analysis complete:', data);
       await fetchSession();
+      setOptimisticStatus(null); 
       
     } catch (error) {
       console.error('Analysis error:', error);
       setAnalysisError('Network error. Please check your connection and try again.');
+      setOptimisticStatus(null); 
     } finally {
       setAnalyzing(false);
     }
@@ -135,7 +142,7 @@ export default function SessionDetailPage() {
 
       const result = await response.json();
       
-      console.log('✅ Override saved:', result);
+      console.log('Override saved:', result);
 
       setShowOverrideModal(false);
       setOverrideNotes('');
@@ -190,107 +197,115 @@ export default function SessionDetailPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Session Info Card */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <div className="text-sm text-gray-600">Fellow</div>
-              <div className="text-lg font-semibold text-gray-900">{session.fellowName}</div>
-            </div>
-            <div>
-              <div className="text-sm text-gray-600">Group ID</div>
-              <div className="text-lg font-semibold text-gray-900">{session.groupId}</div>
-            </div>
-            <div>
-              <div className="text-sm text-gray-600">Date</div>
-              <div className="text-lg font-semibold text-gray-900">
-                {new Date(session.sessionDate).toLocaleDateString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </div>
-            </div>
-            <div>
-              <div className="text-sm text-gray-600">Duration</div>
-              <div className="text-lg font-semibold text-gray-900">{session.durationMinutes} minutes</div>
-            </div>
+    <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <div className="text-sm text-gray-600">Fellow</div>
+          <div className="text-lg font-semibold text-gray-900">{session.fellowName}</div>
+        </div>
+        <div>
+          <div className="text-sm text-gray-600">Group ID</div>
+          <div className="text-lg font-semibold text-gray-900">{session.groupId}</div>
+        </div>
+        <div>
+          <div className="text-sm text-gray-600">Date</div>
+          <div className="text-lg font-semibold text-gray-900">
+            {new Date(session.sessionDate).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })}
           </div>
         </div>
-
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-bold text-blue-900">Real-Time AI Analysis</h3>
-            <p className="text-sm text-blue-700 mt-1">
-              Click to run live AI analysis on this transcript
-            </p>
-          </div>
-          <button
-            onClick={runAIAnalysis}
-            disabled={analyzing}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {analyzing ? (
-              <span className="flex items-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Analyzing...
-              </span>
-            ) : (
-              'Run AI Analysis'
+        <div>
+          <div className="text-sm text-gray-600">Status</div>
+          <div className="text-lg font-semibold text-gray-900">
+            {/* OPTIMISTIC UI: Show optimistic status if set, otherwise actual status */}
+            {optimisticStatus || session.status}
+            {optimisticStatus && (
+              <span className="ml-2 text-xs text-yellow-600">(updating...)</span>
             )}
-          </button>
+          </div>
         </div>
       </div>
+    </div>
 
-          {/* AI Analysis Button */}
+
+    {/* AI ANALYSIS SECTION WITH LOADING STATES */}
     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex-1">
           <h3 className="font-bold text-blue-900">Real-Time AI Analysis</h3>
           <p className="text-sm text-blue-700 mt-1">
-            Click to run live AI analysis on this transcript
+            {analyzing 
+              ? 'Analyzing transcript... This may take 15-30 seconds'
+              : 'Click to run live AI analysis on this transcript'
+            }
           </p>
-        </div>
-        <button
-          onClick={runAIAnalysis}
-          disabled={analyzing}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          {analyzing ? (
-            <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          
+          {/* OPTIMISTIC UI: Show processing status */}
+          {optimisticStatus && (
+            <div className="mt-2 inline-flex items-center px-3 py-1 bg-yellow-100 border border-yellow-300 rounded-full text-xs font-medium text-yellow-800">
+              <svg className="animate-spin -ml-1 mr-2 h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Analyzing...
-            </span>
-          ) : (
-            'Run AI Analysis'
-          )}
-        </button>
-      </div>
-      
-      {/* Error Message */}
-      {analysisError && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <div className="flex items-start">
-            <span className="text-2xl mr-3">⚠️</span>
-            <div>
-              <p className="font-medium text-red-900">Analysis Failed</p>
-              <p className="text-sm text-red-700 mt-1">{analysisError}</p>
-              {analysisError.includes('quota') && (
-                <p className="text-xs text-red-600 mt-2">
-                  Tip: The demo is using a free OpenAI trial. In production, this would have proper billing configured.
-                </p>
-              )}
+              Status: {optimisticStatus}
             </div>
-          </div>
+          )}
         </div>
+            {/* LOADING STATE: Disabled button with spinner */}
+    <button
+      onClick={runAIAnalysis}
+      disabled={analyzing}
+      className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+    >
+      {analyzing ? (
+        <>
+          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Analyzing...
+        </>
+      ) : (
+        '🤖 Run AI Analysis'
       )}
+    </button>
+  </div>
+          
+  {/* ERROR HANDLING: User-friendly error display */}
+  {analysisError && (
+    <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+      <div className="flex items-start">
+        <span className="text-2xl mr-3">⚠️</span>
+        <div className="flex-1">
+          <p className="font-medium text-red-900">Analysis Failed</p>
+          <p className="text-sm text-red-700 mt-1">{analysisError}</p>
+          
+          {/* Special message for quota errors */}
+          {analysisError.includes('quota') && (
+            <div className="mt-3 p-3 bg-red-100 rounded border border-red-300">
+              <p className="text-xs text-red-800 font-medium">Demo Limitation</p>
+              <p className="text-xs text-red-700 mt-1">
+                This demo is using OpenAI's free trial. In production, this would have proper billing configured 
+                and would never show this error to supervisors.
+              </p>
+            </div>
+          )}
+          
+          {/* Retry button */}
+          <button
+            onClick={() => setAnalysisError(null)}
+            className="mt-3 text-xs text-red-600 hover:text-red-800 font-medium underline"
+          >
+            Dismiss and try again
+          </button>
+        </div>
+      </div>
     </div>
+  )}
+</div>
 
         {!session.analysis ? (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">

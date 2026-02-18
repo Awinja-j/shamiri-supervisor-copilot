@@ -328,7 +328,7 @@ This high threshold is intentional - false positives desensitize supervisors.
 
 > *"As we scale to serve 10 million youths, our Supervisors are facing a quality assurance bottleneck."*
 
-This is not just a technical challenge - it's a mission-critical requirement. Here's how this architecture scales:
+Here's how this architecture scales:
 
 ### Current Implementation
 
@@ -339,7 +339,6 @@ The current system is designed for **early-scale deployment** (~1,000 active use
 | **Hosting** | Vercel Serverless | Auto-scales to thousands |
 | **Database** | Neon Serverless Postgres | 500MB, ~10K sessions |
 | **AI Analysis** | Synchronous OpenAI calls | ~30s per analysis |
-| **Caching** | None (direct DB queries) | Sufficient for demo |
 | **Auth** | Simple credential check | 1 supervisor |
 
 ### Bottlenecks at 10M Users
@@ -389,9 +388,8 @@ As Shamiri scales, three bottlenecks will emerge:
                                └─────────────────┘
 ```
 
-### Specific Improvements Roadmap
+### Specific Improvements 
 
-#### Phase 1: 10K Users (Next 6 months)
 ```markdown
 - [ ] Redis caching (Upstash)
       WHY: Reduce database load by 80%
@@ -404,10 +402,7 @@ As Shamiri scales, three bottlenecks will emerge:
 - [ ] Database connection pooling (PgBouncer)
       WHY: Neon has connection limits
       IMPACT: Handle 1,000 concurrent supervisors
-```
 
-#### Phase 2: 100K Users (6-12 months)
-```markdown
 - [ ] Switch to GPT-4o-mini for standard sessions
       WHY: 10x cheaper than GPT-4o, 90% as accurate
       IMPACT: Cost drops from $300K to $30K/month
@@ -419,10 +414,7 @@ As Shamiri scales, three bottlenecks will emerge:
 - [ ] Read replicas for database
       WHY: Separate read/write traffic
       IMPACT: Dashboard queries don't compete with writes
-```
 
-#### Phase 3: 1M+ Users (12-24 months)
-```markdown
 - [ ] Fine-tuned model on Shamiri data
       WHY: Custom model trained on real session data
       IMPACT: 10x cheaper, more accurate, culturally aware
@@ -438,18 +430,11 @@ As Shamiri scales, three bottlenecks will emerge:
 - [ ] Real-time audio transcription
       WHY: Manual transcript creation is a bottleneck
       IMPACT: Automatic transcription eliminates data entry
+
+- [ ] Use OpenAI streaming API + Vercel streaming helpers
+      WHY: AI analysis is a single blocking call (15-30 seconds)
+      IMPACT: Real-time progress updates ("Analyzing content... 33%")
 ```
-
-### Cost Projection at Scale
-
-| Scale | Sessions/Month | Without Optimization | With Optimization |
-|-------|---------------|---------------------|-------------------|
-| 1K users | 10,000 | $300 | $30 |
-| 10K users | 100,000 | $3,000 | $150 |
-| 100K users | 1,000,000 | $30,000 | $600 |
-| 1M users | 10,000,000 | $300,000 | $3,000 |
-
-*Optimization includes: caching (80% hit rate) + GPT-4o-mini (90% of sessions) + Batch API*
 
 ### African Context Considerations
 

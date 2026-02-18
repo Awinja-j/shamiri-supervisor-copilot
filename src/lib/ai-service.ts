@@ -119,11 +119,27 @@ Respond with a JSON object matching this exact structure:
     const validatedAnalysis = SessionAnalysisSchema.parse(rawAnalysis);
 
     const processingTime = Date.now() - startTime;
-    console.log(`✅ Analysis complete in ${processingTime}ms`);
+    console.log(`Analysis complete in ${processingTime}ms`);
 
     return validatedAnalysis;
-  } catch (error) {
-    console.error('❌ AI analysis failed:', error);
+  } catch (error: any) {
+    console.error('AI analysis failed:', error);
+    
+    // Handle specific OpenAI errors
+    if (error?.status === 429) {
+      throw new Error('QUOTA_EXCEEDED: OpenAI API quota exceeded. Please add credits to your account or try again later.');
+    }
+    
+    if (error?.status === 401) {
+      throw new Error('AUTH_ERROR: Invalid OpenAI API key. Please check your configuration.');
+    }
+    
+    if (error?.status === 500 || error?.status === 503) {
+      throw new Error('SERVICE_ERROR: OpenAI service is temporarily unavailable. Please try again in a few minutes.');
+    }
+    
+    // Generic error
+    throw new Error(`AI_ERROR: ${error?.message || 'Unknown error occurred during analysis'}`);
     
     return {
       summary: 'Analysis failed. Please review manually or try again.',
