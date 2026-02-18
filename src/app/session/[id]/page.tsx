@@ -1,4 +1,3 @@
-// src/app/session/[id]/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -78,7 +77,7 @@ export default function SessionDetailPage() {
     if (response.ok) {
       const data = await response.json();
       console.log('✅ AI Analysis:', data);
-      // Refresh the session data
+
       await fetchSession();
       alert('AI Analysis Complete! Check the console for results.');
     } else {
@@ -104,12 +103,45 @@ export default function SessionDetailPage() {
     return 'Missed';
   };
 
+
   const handleOverride = async (newStatus: 'SAFE' | 'RISK') => {
-    // In production, this would call an API
-    console.log('Override:', { sessionId, newStatus, notes: overrideNotes });
-    alert(`Session marked as ${newStatus}. In production, this would update the database.`);
-    setShowOverrideModal(false);
-    setOverrideNotes('');
+    if (!overrideNotes.trim()) {
+      alert('Please provide reasoning for your override decision.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}/override`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newStatus,
+          notes: overrideNotes,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        alert(`Failed to save override: ${error.error}`);
+        return;
+      }
+
+      const result = await response.json();
+      
+      console.log('✅ Override saved:', result);
+
+      setShowOverrideModal(false);
+      setOverrideNotes('');
+
+      await fetchSession();
+
+      alert(`Successfully changed status to ${newStatus}`);
+    } catch (error) {
+      console.error('Error saving override:', error);
+      alert('An error occurred while saving your override. Please try again.');
+    }
   };
 
   if (loading) {

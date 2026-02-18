@@ -6,7 +6,7 @@ A web-based AI-powered dashboard that amplifies a Supervisor's capacity to revie
 
 ## 🌍 Live Demo
 
-**Production URL**: [shamiri-supervisor-copilot.vercel.app](https://shamiri-supervisor-copilot.vercel.app)
+**Production URL**: [https://shamiri-supervisor-copilot-u7yx-3rvrpi5ot.vercel.app/session/1](https://shamiri-supervisor-copilot-u7yx-3rvrpi5ot.vercel.app/session/1)
 
 **Demo Credentials**:
 - Email: `kamau@shamiri.org`
@@ -187,6 +187,115 @@ When a Supervisor clicks "Run AI Analysis" on a session:
 6. UI updates with scores, evidence, and risk flags
 ```
 
+## 🔄 Human-in-the-Loop: Supervisor Override
+
+AI is not perfect. Every AI assessment can be reviewed and overridden by a Supervisor to ensure accuracy and build trust.
+
+### How It Works
+```
+AI flags session as RISK
+    ↓
+Supervisor reviews transcript and AI reasoning
+    ↓
+Supervisor disagrees: "This is a false positive"
+    ↓
+Clicks "Review & Override"
+    ↓
+Provides written justification
+    ↓
+Changes status to SAFE
+    ↓
+Override saved to database with full audit trail
+```
+
+### Why This Matters
+
+**Accountability**: Every override is tracked with:
+- Who made the decision
+- When it was made  
+- Why they disagreed with the AI
+- What the previous status was
+- What the new status is
+
+**Trust**: Supervisors remain in control - the AI is a tool, not a decision-maker.
+
+**Continuous Improvement**: Override data can be used to:
+- Identify patterns in AI errors
+- Fine-tune the model
+- Improve prompt engineering
+- Reduce false positives over time
+
+### Example Scenario
+
+**AI Assessment:**
+```
+🚨 RISK DETECTED
+Quote: "I've been thinking about ending it all"
+Confidence: 95%
+```
+
+**Supervisor Review:**
+The supervisor reads the full transcript and discovers the student was discussing the ending of a novel for their literature class assignment.
+
+**Override:**
+```
+Action: REJECT (AI was wrong)
+Previous Status: RISK
+New Status: SAFE
+Notes: "Student was discussing the book 'The Great Gatsby' 
+        for their English class. No actual self-harm intent. 
+        Context matters - this is why human review is essential."
+```
+
+**Result:**
+- Session status updated to "Safe"
+- Risk flag marked as resolved
+- Override logged for audit and training purposes
+- Supervisor's decision documented for accountability
+
+### Database Schema
+
+Every override creates a `SupervisorOverride` record:
+```typescript
+{
+  id: "override_123",
+  analysisId: "analysis_abc",      // Links to AI analysis
+  supervisorId: "supervisor_1",    // Who made the call
+  action: "REJECT",                // VALIDATE | REJECT | MODIFY
+  previousFlag: "RISK",            // What AI said
+  newFlag: "SAFE",                 // What supervisor decided
+  notes: "Student discussing fiction, not reality",
+  createdAt: "2024-02-19T10:30:00Z"
+}
+```
+
+This creates a complete audit trail for compliance and quality assurance.
+
+### API Endpoint
+```
+POST /api/sessions/{sessionId}/override
+
+Request Body:
+{
+  "newStatus": "SAFE" | "RISK",
+  "notes": "Explanation for override decision"
+}
+
+Response:
+{
+  "success": true,
+  "override": {
+    "id": "...",
+    "action": "REJECT",
+    "previousFlag": "RISK",
+    "newFlag": "SAFE"
+  },
+  "sessionStatus": "Safe"
+}
+```
+
+---
+
 ### Quality Metrics
 
 **Metric 1: Content Coverage** - Did the Fellow teach Growth Mindset?
@@ -212,20 +321,6 @@ The AI flags sessions as `RISK` **only** when there is explicit mention of:
 - Abuse currently happening
 
 This high threshold is intentional - false positives desensitize supervisors.
-
----
-
-## 🔄 Human-in-the-Loop
-
-AI is imperfect. Every AI finding can be overridden by a Supervisor:
-
-1. Supervisor reviews AI assessment
-2. Clicks **"Review & Override"**
-3. Writes reasoning in notes field
-4. Selects new status (Safe / Risk)
-5. Override saved to `SupervisorOverride` table with full audit trail
-
-This creates accountability and improves trust in the system.
 
 ---
 
