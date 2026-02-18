@@ -245,9 +245,56 @@ export default function SessionDetailPage() {
         </div>
       </div>
 
+          {/* AI Analysis Button */}
+    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-bold text-blue-900">Real-Time AI Analysis</h3>
+          <p className="text-sm text-blue-700 mt-1">
+            Click to run live AI analysis on this transcript
+          </p>
+        </div>
+        <button
+          onClick={runAIAnalysis}
+          disabled={analyzing}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          {analyzing ? (
+            <span className="flex items-center">
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Analyzing...
+            </span>
+          ) : (
+            'Run AI Analysis'
+          )}
+        </button>
+      </div>
+      
+      {/* Error Message */}
+      {analysisError && (
+        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start">
+            <span className="text-2xl mr-3">⚠️</span>
+            <div>
+              <p className="font-medium text-red-900">Analysis Failed</p>
+              <p className="text-sm text-red-700 mt-1">{analysisError}</p>
+              {analysisError.includes('quota') && (
+                <p className="text-xs text-red-600 mt-2">
+                  Tip: The demo is using a free OpenAI trial. In production, this would have proper billing configured.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
         {!session.analysis ? (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <p className="text-yellow-800 font-medium">⏳ AI Analysis in Progress</p>
+            <p className="text-yellow-800 font-medium">AI Analysis in Progress</p>
             <p className="text-yellow-700 text-sm mt-2">This session is currently being analyzed. Check back in a few minutes.</p>
           </div>
         ) : (
