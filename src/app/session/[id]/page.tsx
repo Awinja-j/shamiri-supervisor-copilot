@@ -54,6 +54,8 @@ export default function SessionDetailPage() {
   }, [sessionId]);
   
   const [analyzing, setAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+
 
   const fetchSession = async () => {
     try {
@@ -67,29 +69,32 @@ export default function SessionDetailPage() {
     }
   };
 
-  const runAIAnalysis = async () => {
-  setAnalyzing(true);
-  try {
-    const response = await fetch(`/api/sessions/${sessionId}/analyze`, {
-      method: 'POST',
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      console.log('✅ AI Analysis:', data);
 
+  const runAIAnalysis = async () => {
+    setAnalyzing(true);
+    setAnalysisError(null);
+    
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}/analyze`, {
+        method: 'POST',
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        setAnalysisError(data.userMessage || data.message || 'Analysis failed');
+        return;
+      }
+      
       await fetchSession();
-      alert('AI Analysis Complete! Check the console for results.');
-    } else {
-      alert('Analysis failed. Check console for errors.');
+      
+    } catch (error) {
+      console.error('Analysis error:', error);
+      setAnalysisError('Network error. Please check your connection and try again.');
+    } finally {
+      setAnalyzing(false);
     }
-  } catch (error) {
-    console.error('Analysis error:', error);
-    alert('Analysis failed. Check console for errors.');
-  } finally {
-    setAnalyzing(false);
-  }
-};
+  };
 
   const getScoreColor = (score: number) => {
     if (score === 3) return 'text-green-600 bg-green-50';
