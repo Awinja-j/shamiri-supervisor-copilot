@@ -4,7 +4,7 @@ A web-based AI-powered dashboard that amplifies a Supervisor's capacity to revie
 
 ![Dashboard Preview](public/dashboard-preview.png)
 
-## 🌍 Live Demo
+## Live Demo
 
 **Production URL**: [https://shamiri-supervisor-copilot-u7yx-3rvrpi5ot.vercel.app/session/1](https://shamiri-supervisor-copilot-u7yx-3rvrpi5ot.vercel.app/session/1)
 
@@ -122,7 +122,7 @@ Login with:
 
 ---
 
-## 🗄️ Database Schema
+## Database Schema
 ```
 Supervisor
     │
@@ -168,7 +168,7 @@ id, analysisId, supervisorId, action, previousFlag, newFlag, notes
 
 ---
 
-## 🤖 AI Analysis Engine
+## AI Analysis Engine
 
 ### How It Works
 
@@ -187,7 +187,7 @@ When a Supervisor clicks "Run AI Analysis" on a session:
 6. UI updates with scores, evidence, and risk flags
 ```
 
-## 🔄 Human-in-the-Loop: Supervisor Override
+## Human-in-the-Loop: Supervisor Override
 
 AI is not perfect. Every AI assessment can be reviewed and overridden by a Supervisor to ensure accuracy and build trust.
 
@@ -229,7 +229,7 @@ Override saved to database with full audit trail
 
 **AI Assessment:**
 ```
-🚨 RISK DETECTED
+RISK DETECTED
 Quote: "I've been thinking about ending it all"
 Confidence: 95%
 ```
@@ -324,7 +324,7 @@ This high threshold is intentional - false positives desensitize supervisors.
 
 ---
 
-## 🚀 Scaling Strategy: Serving 10 Million Youths
+## Scaling Strategy: Serving 10 Million Youths
 
 > *"As we scale to serve 10 million youths, our Supervisors are facing a quality assurance bottleneck."*
 
@@ -459,7 +459,7 @@ Scaling for Shamiri is not just about technology - it's about context:
 
 ---
 
-## 🤝 AI Collaboration Report
+## AI Collaboration Report
 
 As required by the assignment, here is a transparent breakdown of AI usage:
 
@@ -499,7 +499,7 @@ Every AI-generated piece of code was verified by:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 ```
 shamiri-supervisor-copilot/
 ├── prisma/
@@ -544,12 +544,10 @@ shamiri-supervisor-copilot/
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DATABASE_URL` | ✅ Yes | Neon PostgreSQL connection string |
-| `OPENAI_API_KEY` | ✅ Yes | OpenAI API key for analysis |
-| `NEXTAUTH_SECRET` | ✅ Yes | Random string for session encryption |
-| `NEXTAUTH_URL` | ✅ Yes | Your deployment URL |
+| `DATABASE_URL` | Yes | Neon PostgreSQL connection string |
+| `OPENAI_API_KEY` |Yes | OpenAI API key for analysis |
+| `NEXTAUTH_SECRET` |Yes | Random string for session encryption |
+| `NEXTAUTH_URL` | Yes | Your deployment URL |
 
----
 
-## License
 
