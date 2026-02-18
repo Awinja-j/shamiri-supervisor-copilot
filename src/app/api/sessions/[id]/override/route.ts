@@ -76,13 +76,13 @@ export async function POST(
 
     const sessionStatus = newStatus === 'SAFE' ? 'Safe' : 'Flagged for Review';
     
-    await prisma.session.update({
+    await (prisma.session as any).update({
       where: { id },
       data: { status: sessionStatus },
     });
 
     if (newStatus === 'RISK') {
-      await prisma.riskFlag.upsert({
+      await (prisma.riskFlag as any).upsert({
         where: {
           sessionId: id,
         },
@@ -98,7 +98,6 @@ export async function POST(
         },
       });
     } else {
-      // Mark risk flags as resolved
       await prisma.riskFlag.updateMany({
         where: { sessionId: id },
         data: {

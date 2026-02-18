@@ -1,8 +1,7 @@
 import { config } from 'dotenv';
 
 config({ path: '.env' });
-
-import { PrismaClient } from '@/generated/prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
@@ -251,13 +250,11 @@ async function main() {
   });
   console.log(`Created supervisor: ${supervisor.name}\n`);
 
-  // Create fellows and sessions
   console.log('Creating fellows and sessions...');
   for (let i = 0; i < FELLOWS_DATA.length; i++) {
     const fellowData = FELLOWS_DATA[i];
     const sessionData = SESSIONS_DATA[i];
 
-    // Create fellow
     const fellow = await prisma.fellow.create({
       data: {
         name: fellowData.name,
@@ -266,11 +263,9 @@ async function main() {
       },
     });
 
-    // Get transcript for this group
     const transcript = TRANSCRIPTS[sessionData.groupId as keyof typeof TRANSCRIPTS];
 
-    // Create session
-    const session = await prisma.session.create({
+    const session = await (prisma.session as any).create({
       data: {
         fellowId: fellow.id,
         groupId: sessionData.groupId,
