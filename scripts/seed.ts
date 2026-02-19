@@ -1,16 +1,32 @@
+import { resolve } from 'path';
 import { config } from 'dotenv';
 
-config({ path: '.env' });
+const envPath = resolve(process.cwd(), '.env');
+console.log('📁 Loading .env from:', envPath);
+
+const result = config({ path: envPath });
+
+if (result.error) {
+  console.error('❌ Failed to load .env file:', result.error);
+  throw result.error;
+}
+console.log('✅ .env loaded');
+console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+console.log('DATABASE_URL preview:', process.env.DATABASE_URL?.substring(0, 30) + '...');
+
+if (!process.env.DATABASE_URL) {
+  console.error('❌ DATABASE_URL is not set after loading .env');
+  console.error('Current working directory:', process.cwd());
+  console.error('Looking for .env at:', envPath);
+  throw new Error('DATABASE_URL environment variable is required');
+}
+
 import { PrismaClient } from '@prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
 
 neonConfig.webSocketConstructor = ws;
-
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL is not set in .env file');
-}
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

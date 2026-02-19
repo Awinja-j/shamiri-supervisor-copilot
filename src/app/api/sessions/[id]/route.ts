@@ -1,27 +1,53 @@
-// src/app/api/sessions/[id]/route.ts
 import { NextResponse } from 'next/server';
-import { MOCK_SESSIONS, MOCK_ANALYSIS } from '@/lib/mock-data';
+import { prisma } from '@/lib/prisma';
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }  
-) {
-  // Await the params
-  const { id } = await params;  
-  
-  const session = MOCK_SESSIONS.find(s => s.id === id);
-  
-  if (!session) {
+export async function GET() {
+  try {
+    console.log('Fetching sessions from database...');
+    
+    const sessions = await prisma.session.findMany({
+      include: {
+        fellow: {
+          select: { name: true },
+        },
+        analyses: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+        riskFlags: {
+          where: { resolved: false },
+        },
+      },
+      orderBy: [
+        { sessionDate: 'desc' },
+      ],
+    });
+
+    console.log(`Found ${sessions.length} sessions in database`);
+
+    const formatted = sessions.map(session => ({
+      id: session.id,
+      fellowName: session.fellow.name,
+      groupId: session.groupId,
+      sessionDate: session.sessionDate,
+      durationMinutes: session.durationMinutes,
+      status: session.riskFlags.length > 0 
+        ? 'Flagged for Review' 
+        : session.analyses.length > 0 
+          ? 'Safe' 
+          : 'Pending',
+      hasAnalysis: session.analyses.length > 0,
+      riskLevel: session.riskFlags.length > 0
+        ? session.riskFlags[0].severity
+        : 'none',
+    }));
+
+    return NextResponse.json(formatted);
+  } catch (error) {
+    console.error('Error fetching sessions:', error);
     return NextResponse.json(
-      { error: 'Session not found' },
-      { status: 404 }
+      { error: 'Failed to fetch sessions' },
+      { status: 500 }
     );
   }
-
-  const analysis = MOCK_ANALYSIS[id as keyof typeof MOCK_ANALYSIS];
-
-  return NextResponse.json({
-    ...session,
-    analysis,
-  });
 }
