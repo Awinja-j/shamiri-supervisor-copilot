@@ -1,0 +1,154 @@
+{
+  "supervisors": [
+    {
+      "id": "supervisor-1",
+      "name": "Dr. Kamau Mwangi",
+      "email": "kamau@shamiri.org",
+      "createdAt": "2024-02-20T10:00:00Z"
+    }
+  ],
+  "fellows": [
+    {
+      "id": "fellow-1",
+      "name": "Amara Okonkwo",
+      "cohort": "2024-Q1",
+      "supervisorId": "supervisor-1"
+    },
+    {
+      "id": "fellow-2",
+      "name": "Kwame Mensah",
+      "cohort": "2024-Q1",
+      "supervisorId": "supervisor-1"
+    },
+    {
+      "id": "fellow-3",
+      "name": "Zainab Hassan",
+      "cohort": "2024-Q1",
+      "supervisorId": "supervisor-1"
+    },
+    {
+      "id": "fellow-4",
+      "name": "David Mwangi",
+      "cohort": "2024-Q1",
+      "supervisorId": "supervisor-1"
+    },
+    {
+      "id": "fellow-5",
+      "name": "Grace Achieng",
+      "cohort": "2024-Q1",
+      "supervisorId": "supervisor-1"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "session-1",
+      "fellowId": "fellow-1",
+      "groupId": "GRP-001",
+      "sessionDate": "2024-02-10T14:00:00Z",
+      "durationMinutes": 55,
+      "status": "Safe",
+      "transcript": "[00:00] Fellow Amara: Good afternoon everyone! Welcome to our Growth Mindset session.\n[02:20] Fellow Amara: Has anyone here heard the phrase your brain is like a muscle?\n[03:00] Fellow Amara: Exactly! This is called Growth Mindset. It's the belief that your abilities can be developed through dedication and hard work.\n[16:00] Fellow Amara: Yes! Remember, the brain is like a muscle - it grows stronger with use."
+    },
+    {
+      "id": "session-2",
+      "fellowId": "fellow-2",
+      "groupId": "GRP-002",
+      "sessionDate": "2024-02-11T10:00:00Z",
+      "durationMinutes": 48,
+      "status": "Safe",
+      "transcript": "[00:00] Fellow Kwame: Hello everyone, let's start.\n[01:00] Fellow Kwame: Your brain is like a muscle. When you learn, it grows.\n[03:20] Fellow Kwame: Wait, let me finish explaining first.\n[20:00] Fellow Kwame: Growth Mindset good, Fixed Mindset bad."
+    },
+    {
+      "id": "session-3",
+      "fellowId": "fellow-3",
+      "groupId": "GRP-003",
+      "sessionDate": "2024-02-12T15:30:00Z",
+      "durationMinutes": 62,
+      "status": "Safe",
+      "transcript": "[00:00] Fellow Zainab: Habari everyone! Good afternoon!\n[05:40] Fellow Zainab: This is Growth Mindset - the belief that abilities can grow through hard work.\n[23:30] Fellow Zainab: Perfect! You all understand this so well."
+    },
+    {
+      "id": "session-4",
+      "fellowId": "fellow-4",
+      "groupId": "GRP-004",
+      "sessionDate": "2024-02-13T09:00:00Z",
+      "durationMinutes": 52,
+      "status": "Flagged for Review",
+      "transcript": "[00:00] Fellow David: Good morning everyone.\n[06:30] Student 3: I've been feeling really down. Like nothing I do matters.\n[07:25] Student 3: I've been thinking about whether things would be better if I wasn't around.\n[08:30] Student 3: I've been thinking about maybe taking all my mom's sleeping pills. I even looked up how many would be enough.\n[11:00] Student 3: I have a plan and everything.\n[12:00] Fellow David: Okay, well... let's move on with our lesson."
+    },
+    {
+      "id": "session-5",
+      "fellowId": "fellow-5",
+      "groupId": "GRP-005",
+      "sessionDate": "2024-02-14T13:00:00Z",
+      "durationMinutes": 58,
+      "status": "Safe",
+      "transcript": "[00:00] Fellow Grace: Hello everyone!\n[07:20] Fellow Grace: This is Growth Mindset - the belief that abilities can develop through dedication.\n[26:25] Fellow Grace: Perfect! You both got it."
+    }
+  ],
+  "analyses": [
+    {
+      "id": "analysis-1",
+      "sessionId": "session-1",
+      "modelVersion": "gpt-4o",
+      "summary": "Fellow Amara delivered an excellent Growth Mindset session with strong engagement and clear explanations.",
+      "contentScore": 3,
+      "contentEvidence": ["Line 45: Explained brain plasticity", "Line 102: Asked for examples"],
+      "contentReasoning": "Fellow covered all key concepts clearly.",
+      "facilitationScore": 3,
+      "facilitationEvidence": ["Line 20: Thank you for sharing", "Line 85: Asked open questions"],
+      "facilitationReasoning": "Excellent facilitation with empathy.",
+      "protocolScore": 3,
+      "protocolEvidence": ["Stayed focused on curriculum", "No unauthorized advice"],
+      "protocolReasoning": "Adhered perfectly to protocol.",
+      "riskFlag": "SAFE",
+      "riskSeverity": "none",
+      "riskConfidence": 0.98,
+      "riskQuotes": [],
+      "riskReasoning": "No safety concerns detected.",
+      "processingTimeMs": 3500,
+      "createdAt": "2024-02-20T10:30:00Z"
+    },
+    {
+      "id": "analysis-4",
+      "sessionId": "session-4",
+      "modelVersion": "gpt-4o",
+      "summary": "URGENT: Session contains explicit self-harm disclosure with detailed plan. Fellow did not appropriately handle the crisis.",
+      "contentScore": 2,
+      "contentEvidence": ["Line 30: Mentioned Growth Mindset"],
+      "contentReasoning": "Concept mentioned but session derailed by crisis.",
+      "facilitationScore": 1,
+      "facilitationEvidence": ["Line 95: Dismissed serious disclosure", "Line 110: Failed to pause"],
+      "facilitationReasoning": "Failed to respond to student in crisis.",
+      "protocolScore": 1,
+      "protocolEvidence": ["Line 85: Student disclosed suicidal ideation", "Line 115: No escalation"],
+      "protocolReasoning": "CRITICAL VIOLATION: Failed to follow crisis protocol.",
+      "riskFlag": "RISK",
+      "riskSeverity": "severe",
+      "riskConfidence": 0.99,
+      "riskQuotes": [
+        "I've been thinking about maybe taking all my mom's sleeping pills. I even looked up how many would be enough.",
+        "I have a plan and everything."
+      ],
+      "riskReasoning": "Explicit self-harm disclosure with method and plan.",
+      "processingTimeMs": 4200,
+      "createdAt": "2024-02-20T11:00:00Z"
+    }
+  ],
+  "riskFlags": [
+    {
+      "id": "risk-1",
+      "sessionId": "session-4",
+      "severity": "severe",
+      "quotes": [
+        "I've been thinking about maybe taking all my mom's sleeping pills.",
+        "I have a plan and everything."
+      ],
+      "resolved": false,
+      "resolvedBy": null,
+      "resolvedAt": null,
+      "createdAt": "2024-02-20T11:00:00Z"
+    }
+  ],
+  "overrides": []
+}
